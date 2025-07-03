@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 const menuItems = {
   admin: [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "User Management", path: "/user-management" },
     { name: "Database", path: "/database" },
     { name: "Settings", path: "/settings" },
     { name: "User Log History", path: "/user-log-history" },
@@ -11,12 +10,12 @@ const menuItems = {
   operator: [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Ticket Approval", path: "/ticket-approval" },
-    { name: "My Tickets", path: "/tickets" },
+    { name: "My Tickets", path: "/mytickets" },
     { name: "Performance", path: "/performance" },
   ],
   support: [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "My Tickets", path: "/tickets" },
+    { name: "My Tickets", path: "/mytickets" },
     { name: "Performance", path: "/performance" },
   ],
   user: [
