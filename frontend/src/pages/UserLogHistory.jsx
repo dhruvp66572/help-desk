@@ -1,15 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axiosinstance from "../utils/axiosInstance";
 
-const dummyLogs = [
-  { id: 1, user: "John Doe", action: "Login", date: "03/07/25 10:30 AM" },
-  { id: 2, user: "Jane Smith", action: "Created Ticket", date: "03/07/25 11:15 AM" },
-  { id: 3, user: "Alex Ray", action: "Logout", date: "03/07/25 12:00 PM" },
-];
 
 export default function UserLogHistory() {
   const [search, setSearch] = useState("");
+  const [logs, setLogs] = useState([]);
 
-  const filteredLogs = dummyLogs.filter(
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosinstance.get("/logs"); 
+      if (response.data.success) {
+        console.log("Fetched logs:", response.data.logs);
+        setLogs(response.data.logs);
+      } else {
+        console.log(response)
+        console.error("No logs found in the response");
+      }
+    } catch (error) {
+      console.error("Error fetching log data:", error);
+    }
+  };
+
+  const filteredLogs = logs.filter(
     (log) =>
       log.user.toLowerCase().includes(search.toLowerCase()) ||
       log.action.toLowerCase().includes(search.toLowerCase())

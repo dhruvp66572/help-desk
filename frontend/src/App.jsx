@@ -14,11 +14,16 @@ import Performance from "./pages/Performance";
 import TicketApproval from "./pages/TicketApproval";
 import MyTickets from "./pages/MyTickets";
 import ForgotPassword from "./pages/ForgotPassword";
+import { jwtDecode } from 'jwt-decode';
 
 
 export default function App() {
-  // Simulate role (later get from auth/localStorage)
-  const userRole = "user"; // Change to operator, support, user for testing
+  // Decode token to get role and other details
+  const decoded = jwtDecode(localStorage.getItem("token"));
+  const userRole = decoded.role; // Assuming the token contains a 'role' field
+  const userId = decoded.userId; // Assuming the token contains a 'userId'
+  const username = decoded.username; // Assuming the token contains a 'username' field
+  console.log(decoded); // { userId, role, username, iat, exp }
 
   return (
     <Routes>
@@ -31,16 +36,14 @@ export default function App() {
       {/* Main Layout with role-based routes */}
 
       <Route element={<MainLayout role={userRole} />}>
-        <Route path="/dashboard" element={<Dashboard role={userRole} />} />       
+        <Route path="/dashboard" element={<Dashboard role={userRole} />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/tickets" element={<ListTickets />} />
         <Route path="/mytickets" element={<MyTickets />} />
 
-
-
         {/* User specific routes */}
         <Route path="/newticket" element={<NewTicket />} />
-        
+
         {/* Operator specific routes */}
         <Route path="/ticket-approval" element={<TicketApproval />} />
         <Route path="/performance" element={<Performance />} />
@@ -49,8 +52,6 @@ export default function App() {
         <Route path="/database" element={<Database />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/user-log-history" element={<UserLogHistory />} />
-
-
       </Route>
 
       <Route path="*" element={<NotFound />} />

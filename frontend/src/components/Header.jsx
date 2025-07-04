@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FiBell, FiUser, FiLogOut } from "react-icons/fi";
 import { useState } from "react";
+import axiosinstance from "../utils/axiosInstance";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -11,6 +12,27 @@ export default function Header() {
   const handleNotificationClick = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
+  const handlelogout = async () => {
+    const verify = window.confirm("Are you sure you want to logout?");
+    if (!verify) return;
+    try {
+      await axiosinstance.post('/auth/logout').then((response) => {
+        if (response.data.success) {
+          console.log("Logout successful");
+          localStorage.removeItem('token');
+          navigate('/login');
+        } else {
+          console.error("Logout failed:", response.data.message); 
+        }
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+    
+  };
+
+
 
   return (
     <>
@@ -48,10 +70,7 @@ export default function Header() {
             type="button"
             className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
             aria-label="Logout"
-            onClick={() => {
-              // Add logout logic here
-              navigate("/login");
-            }}
+            onClick={handlelogout}
           >
             <FiLogOut size={22} />
           </button>

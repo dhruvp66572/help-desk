@@ -2,18 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-const authRoutes = require('./routes/auth');
-// const ticketRoutes = require('./routes/tickets');
-// const userRoutes = require('./routes/users');
-// const teamRoutes = require('./routes/team');
-
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
-// app.use('/api/tickets', ticketRoutes);
-// app.use('/api/users', userRoutes);
-// app.use('/api/team', teamRoutes);
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/teams', require('./routes/teams'));
+app.use('/api/logs', require('./routes/logs'));
+app.use('/api/stats', require('./routes/stats'));
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

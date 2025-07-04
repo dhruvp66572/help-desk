@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axiosinstance from "../utils/axiosInstance";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -16,21 +17,31 @@ export default function Login() {
     }
 
     setLoading(true);
+    
+    try {
+      // Simulate an API call for login
+      const res = axiosinstance.post('/auth/login', {
+        username: form.username,
+        password: form.password,
+      });
 
-    // Accept "admin" as username only
-    const isAdmin =
-      form.username === "admin" && form.password === "Admin@1234";
-
-    if (isAdmin) {
+      res.then((response) => {
+        if (response.data.success) {
+          setLoading(false);
+          alert("Login successful!");
+          localStorage.setItem("token", response.data.token);
+          navigate("/dashboard");
+        }
+      }).catch((error) => {
+        setLoading(false);
+        console.error("Login error:", error);
+        setError(error.response.data.message || "An error occurred. Please try again.");
+      });
+    } catch (error) {
       setLoading(false);
-      alert("Login successful!");
-      navigate("/dashboard");
-    } else {
-      setLoading(false);
-      setError("Invalid username or password");
+      console.error("Login error:", error);
+      setError("An error occurred. Please try again.");
     }
-
-    setForm({ username: "", password: "" });
   };
 
   return (
