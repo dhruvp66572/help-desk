@@ -12,7 +12,7 @@ export default function MainLayout({ role }) {
         <main className="flex-1 overflow-y-auto bg-cleanWhite">
           <Outlet />
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );
