@@ -1,38 +1,69 @@
 import { useState } from "react";
+import axiosinstance from "../utils/axiosInstance";
 
 export default function NewTicket() {
   const [form, setForm] = useState({
-    ticketNo: "", // Auto-generated or manual
+    ticketNumber: "", // Auto-generated or manual
     date: new Date().toISOString().split("T")[0], // Default to today
     name: "",
     department: "",
     subject: "",
-    category: "",
-    type: "",
+    category: "",   
     priority: "",
     description: "",
   });
+  const [ischecked , setIschecked] = useState(false);
 
+  const [error, setError] = useState("");
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Ticket submitted successfully!");
-    console.log("Form submitted:", form);
-    // Reset form after submission
-    setForm({
-      ticketNo: "",
-      date: new Date().toISOString().split("T")[0],
-      name: "",
-      department: "",
-      subject: "",
-      category: "",
-      type: "",
-      priority: "",
-      description: "",
-    });
+
+    // check if all required fields are filled
+    if (
+      !form.ticketNumber ||
+      !form.date ||
+      !form.name ||
+      !form.department ||
+      !form.subject ||
+      !form.category ||
+      !form.priority ||
+      !form.description ||
+      !ischecked // Ensure the checkbox is checked
+
+    ) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      // Simulate an API call to submit the ticket
+      const response = await axiosinstance.post("/tickets/", form);
+
+      if (response.data.success) {
+        alert("Ticket submitted successfully!");
+        setError("");
+
+        setForm({
+          ticketNumber: "",
+          date: new Date().toISOString().split("T")[0],
+          name: "",
+          department: "",
+          subject: "",
+          category: "",
+          priority: "",
+          description: "",
+        });
+      } else {
+        setError(response.data.message || "Failed to submit ticket.");
+      }
+    } catch (error) {
+      console.error("Error submitting ticket:", error);
+      setError("Failed to submit ticket. Please try again.");
+    }
   };
 
   return (
@@ -44,11 +75,11 @@ export default function NewTicket() {
           <div>
             <label className="block text-sm font-medium mb-1">Ticket No.</label>
             <input
-              name="ticketNo"
-              value={form.ticketNo}
+              name="ticketNumber"
+              value={form.ticketNumber}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-turquoise"
-              placeholder="Auto-generated or manual"
+              placeholder="Enter ticket number"
               required
             />
           </div>
@@ -117,7 +148,7 @@ export default function NewTicket() {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-1">Type</label>
               <input
                 name="type"
@@ -127,18 +158,22 @@ export default function NewTicket() {
                 required
                 placeholder="Enter type"
               />
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-sm font-medium mb-1">Priority</label>
-              <input
+              <select
                 name="priority"
                 value={form.priority}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-turquoise"
                 required
-                placeholder="Enter priority"
-              />
+              >
+                <option value="">Select priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
             </div>
           </div>
           <div>
@@ -159,11 +194,13 @@ export default function NewTicket() {
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <input type="checkbox" id="robot" />
+            <input type="checkbox" id="robot" checked={ischecked} onChange={(e) => setIschecked(e.target.checked)} />
             <label htmlFor="robot" className="text-sm">
-              I'm not a robot
+              I am not a robot
             </label>
           </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             className="bg-turquoise text-white px-6 py-2 rounded hover:bg-trueBlue transition"

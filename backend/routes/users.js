@@ -5,7 +5,7 @@ const { authenticateToken, authorizeRoles } = require('../middleware/authMiddlew
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.use(authenticateToken, authorizeRoles('admin'));
+router.use(authenticateToken);
 
 // create a new user
 router.post('/', async (req, res) => {
@@ -18,7 +18,15 @@ router.post('/', async (req, res) => {
 // get all users
 router.get('/', async (req, res) => {
   const users = await prisma.user.findMany();
-  res.json(users);
+  res.json({
+    success: true,
+    users: users.map(user => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      roles: user.roles
+    }))
+  });
 });
 
 // get a user by ID

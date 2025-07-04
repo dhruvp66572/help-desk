@@ -74,12 +74,14 @@ router.post('/logout',  authenticateToken, async (req, res) => {
   }
 }); 
 
-router.get('/profile', async (req, res) => {
+router.get('/profile', authenticateToken, async (req, res) => {
   const userId = req.user.id; // Assuming user ID is set in the request by auth middleware
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { team: true }
+      include: { team: true ,
+        password: false, // Exclude password from the response
+       },
     });
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 

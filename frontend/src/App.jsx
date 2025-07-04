@@ -14,16 +14,24 @@ import Performance from "./pages/Performance";
 import TicketApproval from "./pages/TicketApproval";
 import MyTickets from "./pages/MyTickets";
 import ForgotPassword from "./pages/ForgotPassword";
-import { jwtDecode } from 'jwt-decode';
-
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
 
 export default function App() {
-  // Decode token to get role and other details
-  const decoded = jwtDecode(localStorage.getItem("token"));
-  const userRole = decoded.role; // Assuming the token contains a 'role' field
-  const userId = decoded.userId; // Assuming the token contains a 'userId'
-  const username = decoded.username; // Assuming the token contains a 'username' field
-  console.log(decoded); // { userId, role, username, iat, exp }
+  const [decodedtoken, setDecodedToken] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setDecodedToken(decoded);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        // localStorage.removeItem("token"); // Clear invalid token
+      }
+    } 
+  }, []);
 
   return (
     <Routes>
@@ -35,10 +43,10 @@ export default function App() {
 
       {/* Main Layout with role-based routes */}
 
-      <Route element={<MainLayout role={userRole} />}>
-        <Route path="/dashboard" element={<Dashboard role={userRole} />} />
+      <Route element={<MainLayout role={decodedtoken?.role} username={decodedtoken?.username} />}>
+        <Route path="/dashboard" element={<Dashboard role={decodedtoken?.role} />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/tickets" element={<ListTickets />} />
+        <Route path="/tickets" element={<ListTickets id={decodedtoken?.id} />} />
         <Route path="/mytickets" element={<MyTickets />} />
 
         {/* User specific routes */}

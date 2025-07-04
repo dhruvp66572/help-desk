@@ -26,11 +26,14 @@ CREATE TABLE "Ticket" (
     "email" TEXT,
     "subject" TEXT NOT NULL,
     "description" TEXT,
+    "supportedById" INTEGER,
+    "type" TEXT,
     "category" TEXT,
     "priority" TEXT,
     "status" TEXT NOT NULL DEFAULT 'open',
     "dateCreated" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdById" INTEGER NOT NULL,
+    CONSTRAINT "Ticket_supportedById_fkey" FOREIGN KEY ("supportedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Ticket_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

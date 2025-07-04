@@ -7,14 +7,13 @@ export default function ViewTicketModal({ ticket, onClose }) {
         <h3 className="text-lg font-bold mb-4 text-trueBlue">Ticket Details</h3>
 
         <div className="space-y-2 text-sm">
-          <p><strong>Ticket No:</strong> {ticket.id}</p>
+          <p><strong>Ticket No:</strong> {ticket.ticketNumber}</p>
           <p><strong>Subject:</strong> {ticket.subject}</p>
-          <p><strong>Category:</strong> {ticket.category || "N/A"}</p>
-          <p><strong>Type:</strong> {ticket.type || "N/A"}</p>
+          <p><strong>Category:</strong> {ticket.category || "N/A"}</p>        
           <p><strong>Priority:</strong> {ticket.priority || "N/A"}</p>
           <p><strong>Status:</strong> {ticket.status || "N/A"}</p>
           <p><strong>Support by:</strong> {ticket.support || "N/A"}</p>
-          <p><strong>Date:</strong> {ticket.date}</p>
+          <p><strong>Date:</strong> {new Date(ticket.dateCreated).toLocaleDateString() || "N/A"}</p>
           <p><strong>Description:</strong> {ticket.description || "N/A"}</p>
         </div>
 

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ViewTicketModal from "../components/ViewTicketModal";
+import axiosinstance from "../utils/axiosInstance";
 
 const dummyTickets = [
   {
@@ -50,11 +51,27 @@ const statusColor = {
   Closed: "bg-gray-600 text-white",
 };
 
-export default function MyTickets() {
+export default function MyTickets({id}) {
   const [search, setSearch] = useState("");
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [tickets, setTickets] = useState(dummyTickets);
+  useEffect(() => {
+    // This effect can be used to fetch tickets from an API if needed
+    const fetchTickets = async () => {
+      // Simulate fetching tickets from an API
+      const response = await axiosinstance.get(`/tickets/user/${id}`);
+      
+      if (response.data.success){
+        setTickets(response.data.tickets);
+      }else{
+        alert("Failed to fetch tickets");
+      }      
+    };
 
-  const filteredTickets = dummyTickets.filter(
+    fetchTickets();
+  }, [id]);
+
+  const filteredTickets = tickets.filter(
     (ticket) =>
       ticket.subject.toLowerCase().includes(search.toLowerCase()) ||
       ticket.id.toString().includes(search) ||
@@ -76,7 +93,7 @@ export default function MyTickets() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <span>
-          Showing {filteredTickets.length} of {dummyTickets.length} entries
+          Showing {filteredTickets.length} of {tickets.length} entries
         </span>
       </div>
 
@@ -99,7 +116,7 @@ export default function MyTickets() {
                   className="p-2 border text-blue-600 cursor-pointer underline"
                   onClick={() => setSelectedTicket(ticket)}
                 >
-                  {ticket.id}
+                  {ticket.ticketNumber || ticket.id}
                 </td>
                 <td className="p-2 border">{ticket.subject}</td>
                 <td className="p-2 border">
@@ -111,8 +128,8 @@ export default function MyTickets() {
                     {ticket.status}
                   </span>
                 </td>
-                <td className="p-2 border">{ticket.support}</td>
-                <td className="p-2 border">{ticket.date}</td>
+                <td className="p-2 border">{ticket.support || "N/A"}</td>
+                <td className="p-2 border">{new Date(ticket.dateCreated).toLocaleDateString() || "N/A"}</td>
                 <td className="p-2 border">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <span key={i}>{i < ticket.rating ? "⭐" : "☆"}</span>

@@ -1,11 +1,18 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "sqlite" // Use "postgresql" for PostgreSQL, "mysql" for MySQL, etc.
   url      = env("DATABASE_URL")
 }
+
 
 //////////////////////////////////////////////////////
 // User Management Tables
@@ -23,6 +30,7 @@ model User {
   createdAt DateTime @default(now())
   tickets   Ticket[]  @relation("TicketCreator")
   logs      Log[] @relation("UserLogs")
+  supportTickets Ticket[] @relation("TicketSupport")
 }
 
 model Team {
@@ -39,11 +47,14 @@ model Ticket {
   id               Int      @id @default(autoincrement())
   ticketNumber     String   @unique  // Display Ticket No in frontend
   name             String   // Name of the person who created the ticket
-  department       String? // Department of the person who created the ticket
-  email            String? // Email of the person who created the ticket
+  department       String?  // Department of the person who created the ticket
+  email            String?  // Email of the person who created the ticket
   subject          String
   description      String?
-  category         String? 
+  supportedById    Int?     // ID of the support person assigned to the ticket
+  support          User?    @relation("TicketSupport", fields: [supportedById], references: [id])
+  type             String?  // 'Technical' | 'Billing' |
+  category         String?   // 'Technical' | 'Billing' | 'General' etc.
   priority         String?   // 'High' | 'Medium' | 'Low'
   status           String    @default("open")  // 'open' | 'pending' | 'closed'
   dateCreated      DateTime  @default(now())     
@@ -60,5 +71,5 @@ model Log {
   userId    Int
   action    String    // 'login', 'logout', 'created ticket', etc.
   timestamp DateTime @default(now())
-  user      User @relation("UserLogs", fields: [userId], references: [id])
+  user      User @relation("UserLogs", fields: [userId], references: [id])
 }

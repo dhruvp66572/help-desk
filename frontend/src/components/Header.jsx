@@ -3,7 +3,7 @@ import { FiBell, FiUser, FiLogOut } from "react-icons/fi";
 import { useState } from "react";
 import axiosinstance from "../utils/axiosInstance";
 
-export default function Header() {
+export default function Header({username}) {
   const navigate = useNavigate();
   // State to manage notification drawer and count
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function Header() {
         </h1>
         <div className="flex items-center gap-6">
           <span className="text-base font-medium bg-white/20 px-3 py-1 rounded-full shadow-inner">
-            admin
+            {username ? `Welcome, ${username}` : "Welcome, Usser"}
           </span>
           <button
             type="button"
