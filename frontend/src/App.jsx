@@ -16,6 +16,7 @@ import MyTickets from "./pages/MyTickets";
 import ForgotPassword from "./pages/ForgotPassword";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import { Analytics } from '@vercel/analytics/react';  
 
 export default function App() {
   const [decodedtoken, setDecodedToken] = useState(null);
@@ -34,6 +35,7 @@ export default function App() {
   }, []);
 
   return (
+    <>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Login />} />
@@ -64,5 +66,7 @@ export default function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    <Analytics />
+    </>
   );
 }
