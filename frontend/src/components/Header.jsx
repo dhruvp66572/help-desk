@@ -3,7 +3,7 @@ import { FiBell, FiUser, FiLogOut } from "react-icons/fi";
 import { useState } from "react";
 import axiosinstance from "../utils/axiosInstance";
 
-export default function Header({username}) {
+export default function Header({ username }) {
   const navigate = useNavigate();
   // State to manage notification drawer and count
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -17,31 +17,42 @@ export default function Header({username}) {
     const verify = window.confirm("Are you sure you want to logout?");
     if (!verify) return;
     try {
-      await axiosinstance.post('/auth/logout').then((response) => {
+      await axiosinstance.post("/auth/logout").then((response) => {
         if (response.data.success) {
           console.log("Logout successful");
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
           window.location.href = "/login";
         } else {
-          console.error("Logout failed:", response.data.message); 
+          console.error("Logout failed:", response.data.message);
         }
       });
     } catch (error) {
       console.error("Logout failed:", error);
     }
-    
   };
 
-
+  // State for the dismissible popup note
+  const [showNote, setShowNote] = useState(true);
 
   return (
     <>
       <header className="bg-gradient-to-r from-cyan-500 to-teal-400 text-white px-8 py-4 flex justify-between items-center shadow-md">
-        <h1 className="text-2xl font-bold tracking-wide flex items-center gap-2">           
-        </h1>
+        {showNote && (
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 mt-2 text-yellow-200 text-sm bg-yellow-600/80 px-4 py-1 rounded shadow z-50 flex items-center gap-3 animate-popup">
+            <span>If data is not displayed, please reload the page.</span>
+            <button
+              className="text-yellow-100 hover:text-white text-lg font-bold px-2 focus:outline-none"
+              aria-label="Close note"
+              onClick={() => setShowNote(false)}
+            >
+              &times;
+            </button>
+          </div>
+        )}
+        <h1 className="text-2xl font-bold tracking-wide flex items-center gap-2"></h1>
         <div className="flex items-center gap-6">
           <span className="text-base font-medium bg-white/20 px-3 py-1 rounded-full shadow-inner">
-            {username ? `Welcome, ${username}` : "Welcome, Usser"}
+            {username ? `Welcome, ${username}` : "Welcome, User"}
           </span>
           <button
             type="button"
@@ -61,7 +72,7 @@ export default function Header({username}) {
             className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
             aria-label="Profile"
             onClick={() => {
-              navigate('/profile')
+              navigate("/profile");
             }}
           >
             <FiUser size={22} />
@@ -80,7 +91,9 @@ export default function Header({username}) {
       {isDrawerOpen && (
         <div className="fixed top-0 right-0 w-80 max-w-full h-full bg-white shadow-2xl z-50 p-6 flex flex-col animate-slide-in">
           <div className="flex justify-between items-center mb-6 border-b pb-3">
-            <h2 className="text-xl font-semibold text-gray-800">Notifications</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Notifications
+            </h2>
             <button
               className="text-gray-400 hover:text-gray-700 text-2xl font-bold"
               onClick={() => setIsDrawerOpen(false)}
@@ -120,6 +133,13 @@ export default function Header({username}) {
           }
           .animate-slide-in {
             animation: slide-in 0.3s cubic-bezier(0.4,0,0.2,1);
+          }
+          @keyframes popup {
+            from { opacity: 0; transform: translateY(-10px);}
+            to { opacity: 1; transform: translateY(0);}
+          }
+          .animate-popup {
+            animation: popup 0.4s cubic-bezier(0.4,0,0.2,1);
           }
         `}
       </style>
