@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosinstance from "../utils/axiosInstance";
 
@@ -7,6 +7,13 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      // If user is already logged in, redirect to dashboard
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handlelogin = (e) => {
     e.preventDefault();

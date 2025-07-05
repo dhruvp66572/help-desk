@@ -14,9 +14,16 @@ import axiosinstance from "../utils/axiosInstance";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard({ role }) {
   const [ticketData, setTicketData] = useState([5, 2, 3, 2]);
+  const navigate = useNavigate();
+
+  if (!localStorage.getItem("token")) {
+    console.error("Role is not defined. Please check the props passed to Dashboard.");
+    navigate("/login");
+  }
 
   const ticketStats = useMemo(
     () => ({
@@ -38,11 +45,13 @@ export default function Dashboard({ role }) {
       try {
         const response = await axiosinstance.get("/stats");
         console.log("Dashboard data fetched successfully:", response.data);
-        setTicketData(
-          Array.isArray(response.data.ticketStats) && response.data.ticketStats.length === 4
-            ? response.data.ticketStats
-            : [0, 0, 0, 0]
-        );
+        console.log("Ticket Data:", response.data.ticketStats);
+        setTicketData([
+          response.data.ticketStats.total,
+          response.data.ticketStats.open,
+          response.data.ticketStats.pending,
+          response.data.ticketStats.closed,
+        ]);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }

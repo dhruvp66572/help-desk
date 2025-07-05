@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ListTickets from "./pages/ListTickets";
@@ -20,6 +20,7 @@ import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [decodedtoken, setDecodedToken] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,23 +30,28 @@ export default function App() {
         setDecodedToken(decoded);
       } catch (error) {
         console.error("Invalid token:", error);
-        // localStorage.removeItem("token"); // Clear invalid token
+        
+        navigate("/login");
       }
     } 
-  }, []);
+  }, [navigate]);
+
 
   return (
     <>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
+       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Main Layout with role-based routes */}
 
       <Route element={<MainLayout role={decodedtoken?.role} username={decodedtoken?.username} />}>
+      {/* Redirect unauthorized users to login */}    
+
+        {/* Common routes for all roles */}
         <Route path="/dashboard" element={<Dashboard role={decodedtoken?.role} />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/tickets" element={<ListTickets id={decodedtoken?.id} />} />
