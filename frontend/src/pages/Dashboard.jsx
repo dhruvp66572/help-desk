@@ -1,20 +1,55 @@
-import { FaTicketAlt, FaCheckCircle, FaHourglassHalf, FaUser, FaUsers, FaUserTie, FaUserShield } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaHourglassHalf,
+  FaUser,
+  FaUsers,
+  FaUserTie,
+  FaUserShield,
+} from "react-icons/fa";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useEffect } from "react";
+import axiosinstance from "../utils/axiosInstance";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+import { useState, useMemo } from "react";
+
 export default function Dashboard({ role }) {
-  const ticketStats = {
-    labels: ["Solved", "Awaiting Approval", "In Progress"],
-    datasets: [
-      {
-        data: [8, 2, 2],
-        backgroundColor: ["#22c55e", "#ef4444", "#0ea5e9"],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const [ticketData, setTicketData] = useState([5, 2, 3, 2]);
+
+  const ticketStats = useMemo(
+    () => ({
+      labels: ["Total","Open", "In Progress", "Closed"],
+      datasets: [
+        {
+          data: ticketData,
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+          hoverOffset: 4,
+        },
+      ],
+    }),
+    [ticketData]
+  );
+
+  useEffect(() => {
+    // fetch dashboard data from api
+    const fetchData = async () => {
+      try {
+        const response = await axiosinstance.get("/stats");
+        console.log("Dashboard data fetched successfully:", response.data);
+        setTicketData(
+          Array.isArray(response.data.ticketStats) && response.data.ticketStats.length === 4
+            ? response.data.ticketStats
+            : [0, 0, 0, 0]
+        );
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="p-6 space-y-8">
@@ -28,30 +63,30 @@ export default function Dashboard({ role }) {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
-          <Card
-            icon={<FaTicketAlt size={32} />}
-            label="Total Tickets"
-            value={12}
-            color="from-blue-400 to-blue-600"
-          />
+        <div className="flex flex-col gap-4 flex-1">
           <Card
             icon={<FaCheckCircle size={32} />}
             label="Total Solved"
-            value={8}
+            value={Array.isArray(ticketData) ? ticketData[1] : 0}
             color="from-green-400 to-green-600"
           />
           <Card
             icon={<FaHourglassHalf size={32} />}
             label="Awaiting Approval"
-            value={2}
+            value={Array.isArray(ticketData) ? ticketData[2] : 0}
             color="from-red-400 to-red-600"
           />
           <Card
             icon={<FaHourglassHalf size={32} />}
             label="In Progress"
-            value={2}
+            value={Array.isArray(ticketData) ? ticketData[3] : 0}
             color="from-cyan-400 to-cyan-600"
+          />
+          <Card
+            icon={<FaCheckCircle size={32} />}
+            label="Total Tickets"
+            value={Array.isArray(ticketData) ? ticketData[0] : 0}
+            color="from-blue-400 to-blue-600"
           />
 
           {/* Admin only cards */}

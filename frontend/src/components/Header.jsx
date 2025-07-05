@@ -21,7 +21,7 @@ export default function Header({username}) {
         if (response.data.success) {
           console.log("Logout successful");
           localStorage.removeItem('token');
-          navigate('/login');
+          window.location.href = "/login";
         } else {
           console.error("Logout failed:", response.data.message); 
         }

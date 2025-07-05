@@ -14,7 +14,15 @@ router.get('/', async (req, res) => {
     prisma.ticket.count({ where: { status: 'pending' } }),
     prisma.ticket.count({ where: { status: 'closed' } })
   ]);
-  res.json({ total, open, pending, closed });
+  res.json({
+    success: true,
+    ticketStats: {
+      total,
+      open,
+      pending,
+      closed
+    }
+   });
 });
 
 module.exports = router;
