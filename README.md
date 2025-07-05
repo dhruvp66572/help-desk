@@ -467,7 +467,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 <div align="center">
 
-**Project Maintainer:** [Dhruv Patel](https://github.com/dhruvp66572)
+**Project Maintainer:** [Dhruv Prajapati](https://github.com/dhruvp66572)
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/your-profile)
 [![Email](https://img.shields.io/badge/Email-Contact-red?style=for-the-badge&logo=gmail)](mailto:your-email@example.com)
